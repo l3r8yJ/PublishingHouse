@@ -20,41 +20,46 @@ $container = $app->getContainer();
 
 $container['view'] = $view;
 
-$app->get('/', function (Request $request, Response $response, array $args) {
-
-    $view = $this->get('view');
-
-    $articleController = new \App\Controllers\ArticleController();
-
-    $articles = $articleController->getAllArticles();
-
-    $body = $view->render('home.twig', [
-      'articles' => $articles
-    ]);
-  
-    $response->getBody()->write($body);
-
-    return $response;
-});
-
-$app->get('/filter', function (Request $request, Response $response, array $args){
-  
-  $view = $this->get('view');
+$app->get('/', function (Request $request, Response $response, array $args){
 
   $articleController = new \App\Controllers\ArticleController();
 
-  $json = $request->getParsedBody();
-  json_encode($json, true);
+  $paramsQuery = $request->getQueryParams();
 
-  $articles = $articleController->getAllArticlesByFilter($json);
+  $params = array(
+      'title' => "%",
+      'author' => "%",
+      'magazine' => "%",
+      'year_release' => "%"
+  );
+
+  if($paramsQuery['title'] !== ""){
+      $params['title'] = $paramsQuery['title'];
+  }
+
+  if($paramsQuery['author'] !== ""){
+    $params['author'] = $paramsQuery['author'];
+  }
+
+  if($paramsQuery['magazine'] !== ""){
+    $params['magazine'] = $paramsQuery['magazine'];
+}
+
+  if($paramsQuery['year_release'] !== ""){
+    $params['year_release'] = $paramsQuery['year_release'];
+  }
+  
+  
+
+  $articles = $articleController->getAllArticlesByFilter($params);
+
+  $view = $this->get('view');
 
   $body = $view->render('home.twig', [
     'articles' => $articles
   ]);
-
-  $response->getBody()->write($body);
-
-  return $response;
+  
+  return $response->getBody()->write($body);
 
 });
 

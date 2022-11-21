@@ -22,5 +22,4 @@ class ArticleController {
         $result = $articleStorage->getAllArticlesByFilter($params);
         return $result;
     }
-
 }

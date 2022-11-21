@@ -1,23 +1,41 @@
+var sendDataFilter = document.getElementById("apply-filter-btn");
+sendDataFilter.addEventListener("click", function(e){
+    e.preventDefault();
+}, false);
+
+var cleardDataFilter = document.getElementById("clear-filter-btn");
+cleardDataFilter.addEventListener("click", function(e){
+    e.preventDefault();
+}, false);
+
+const currentUrl = window.location.host;
+var url = new URL(currentUrl);
+console.log(url);
+
+const searchString = new URLSearchParams(window.location.search);
+
+document.getElementById('input-author').value = searchString.get('author');
+document.getElementById('input-title').value = searchString.get('title');
+document.getElementById('input-magazine').value = searchString.get('magazine');
+document.getElementById('input-year').value = searchString.get('year_release');
+
+
 $(document).ready(function (){
     $("#apply-filter-btn").click(
         function (){
-            $.ajax({
-                url: '/filter',
-                method: 'get',
-                dataType: 'json',
-                data: generateJSON(),
-                success: function (data){
-                    alert("Successfully");
-                },
-                error: function (jqXHR, exception) {
-                    alert(jqXHR.responseText);
-                }
-            });
+            var params = generateJSON();
+            const currentUrl = window.location.host;
+            var url = new URL(currentUrl);
 
-            location.href = "/filter";
+            url.searchParams.append('title', params['title']);
+            url.searchParams.append('author', params['author']);
+            url.searchParams.append('magazine', params['magazine']);
+            url.searchParams.append('year_release', params['year_release']);
+      
+            document.location.href = " http://" + url.href
         }
     )
-});
+})
 
 
 function generateJSON() {
@@ -29,10 +47,30 @@ function generateJSON() {
     var _params = {
         author: _author.toString(),
         title: _title.toString(),
-        text_content: _input_magazine.toString(),
-        image_link: _input_year.toString(),
+        magazine: _input_magazine.toString(),
+        year_release: _input_year.toString(),
     }
     return _params;
 }
 
+$(document).ready(function () {
+    $("#clear-filter-btn").click(
+        function () {
+            document.getElementById('input-author').value = '';
+            document.getElementById('input-title').value = '';
+            document.getElementById('input-magazine').value = '';
+            document.getElementById('input-year').value = '';
 
+            var params = generateJSON();
+            const currentUrl = window.location.host;
+            var url = new URL(currentUrl);
+
+            url.searchParams.append('title', params['title']);
+            url.searchParams.append('author', params['author']);
+            url.searchParams.append('magazine', params['magazine']);
+            url.searchParams.append('year_release', params['year_release']);
+      
+            document.location.href = " http://" + url.href
+        }
+    )
+})
