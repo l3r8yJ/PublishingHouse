@@ -10,7 +10,6 @@ cleardDataFilter.addEventListener("click", function(e){
 
 const currentUrl = window.location.host;
 var url = new URL(currentUrl);
-console.log(url);
 
 const searchString = new URLSearchParams(window.location.search);
 

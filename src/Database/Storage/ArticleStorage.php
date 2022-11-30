@@ -2,18 +2,19 @@
 
 namespace App\Database\Storage;
 
-class ArticleStorage{
+class ArticleStorage {
+
+    private \PDO $db;
+
+    public function __construct(\PDO $db){
+        $this->db = $db;
+    }
 
     public function getAllArticles () {
 
-        $dsn = "mysql:host=localhost;dbname=PublishingHouse";
-       
-
-        $dbh = new \PDO($dsn, 'root', 'root');
-
         $resultArticlesList = array();
 
-        $stmt = $dbh->query("SELECT  article_announcement_picture , 
+        $stmt = $this->db->query("SELECT  article_announcement_picture , 
         articles.title, articles.text, author,year_release , 
         magazines.title AS 'magazine_title' FROM PublishingHouse.articles 
         INNER JOIN PublishingHouse.magazines ON id_magazine = magazines.id");
@@ -27,14 +28,10 @@ class ArticleStorage{
     }
 
     public function getAllArticlesByFilter ($params) {
-        
-        $dsn = "mysql:host=localhost;dbname=PublishingHouse";
-
-        $dbh = new \PDO($dsn, 'root', 'root');
 
         $resultArticlesList = array();
 
-        $stmt = $dbh->prepare('SELECT  article_announcement_picture , 
+        $stmt = $this->db->prepare('SELECT  article_announcement_picture , 
         articles.title, articles.text, author,year_release , magazines.title AS magazine_title 
         FROM PublishingHouse.articles INNER JOIN PublishingHouse.magazines 
         ON id_magazine = magazines.id WHERE articles.`title` LIKE (:title) 

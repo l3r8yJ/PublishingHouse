@@ -4,63 +4,42 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-require '../vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
+require_once dirname(__DIR__).'/Config.php';
 
 /* Отключаем предупреждения об устаревших функциях */
 error_reporting(E_ALL & ~E_DEPRECATED);
+
+if(!file_exists(dirname(__DIR__) . '/Config.php')){
+    print_r("The configuration file in the root directory does not exist");
+    throw new RuntimeException();
+};
+if(!isset($generalConfig['MYSQL_PATH'])){
+    print_r("Configuration file is not set up correctly");
+    throw new RuntimeException();
+};
+
+/*Устанавливаем подключение к базе данны*/
+$db = new \PDO($generalConfig['MYSQL_PATH'], 'root', 'root');
 
 /* Используем twig*/
 $loader = new FilesystemLoader ('templates');
 $view = new Environment ($loader);
 
-
 $app = new \Slim\App();
 
 $container = $app->getContainer();
 
+$articleStorage = new \App\Database\Storage\ArticleStorage($db);
+$articleController = new \App\Controllers\ArticleController($articleStorage);
+
 $container['view'] = $view;
+$container['articleStorage'] = $articleStorage;
+$container['articleController'] = $articleController;
 
-$app->get('/', function (Request $request, Response $response, array $args){
+$homeController = new \App\Controllers\HomeController($container);
 
-  $articleController = new \App\Controllers\ArticleController();
-
-  $paramsQuery = $request->getQueryParams();
-
-  $params = array(
-      'title' => "%",
-      'author' => "%",
-      'magazine' => "%",
-      'year_release' => "%"
-  );
-
-  if($paramsQuery['title'] !== ""){
-      $params['title'] = $paramsQuery['title'];
-  }
-
-  if($paramsQuery['author'] !== ""){
-    $params['author'] = $paramsQuery['author'];
-  }
-
-  if($paramsQuery['magazine'] !== ""){
-    $params['magazine'] = $paramsQuery['magazine'];
-}
-
-  if($paramsQuery['year_release'] !== ""){
-    $params['year_release'] = $paramsQuery['year_release'];
-  }
-  
-  
-
-  $articles = $articleController->getAllArticlesByFilter($params);
-
-  $view = $this->get('view');
-
-  $body = $view->render('home.twig', [
-    'articles' => $articles
-  ]);
-  
-  return $response->getBody()->write($body);
-
-});
+$app->get('/', array($homeController, 'index'));
 
 $app->run();
+
