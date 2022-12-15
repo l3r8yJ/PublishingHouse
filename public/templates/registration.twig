@@ -1,0 +1,68 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+<div class="registration-form-container">
+    {% if message is not null %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    {% endif %}
+    <div class="registration-form-title">
+        Форма регистрации
+    </div>
+    <form action="/api/registration" method="post">
+        <div class="mb-3">
+            <label for="login" class="form-label">Email address</label>
+            <input name="login" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Confirm password</label>
+            <input name="password_confirm" type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input name="username" type="text" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="date" class="form-label">Date of birth</label>
+            <input name="date_of_birth" type="date" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input name="address" type="text" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="Select" class="form-label">Gender</label>
+            <select name="gender" id="Select" class="form-select">
+                <option>Mail</option>
+                <option>Femail</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="interests" class="form-label">Interests</label>
+            <input name="interests" type="text" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="vk" class="form-label">Link to VK page</label>
+            <input name="vk" type="text" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="blood_group" class="form-label">Factor group</label>
+            <input name="blood_group" type="text" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3">
+            <label for="rh_factor" class="form-label">Rhesus factor</label>
+            <input name="rh_factor" type="text" class="form-control" id="exampleInputPassword1">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+    </form>
+</div>
+
+{% endblock %}
+

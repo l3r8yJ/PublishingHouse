@@ -1,40 +1,47 @@
 var sendDataFilter = document.getElementById("apply-filter-btn");
-sendDataFilter.addEventListener("click", function(e){
-    e.preventDefault();
-}, false);
+if(sendDataFilter !== null){
+    sendDataFilter.addEventListener("click", function(e){
+        e.preventDefault();
+    }, false);
+}
 
 var cleardDataFilter = document.getElementById("clear-filter-btn");
-cleardDataFilter.addEventListener("click", function(e){
-    e.preventDefault();
-}, false);
+if(cleardDataFilter !== null){
+    cleardDataFilter.addEventListener("click", function(e){
+        e.preventDefault();
+    }, false);
+}
 
 const currentUrl = window.location.host;
+
 var url = new URL(currentUrl);
+if(document.getElementById('input-author') !== null){
+    const searchString = new URLSearchParams(window.location.search);
 
-const searchString = new URLSearchParams(window.location.search);
-
-document.getElementById('input-author').value = searchString.get('author');
-document.getElementById('input-title').value = searchString.get('title');
-document.getElementById('input-magazine').value = searchString.get('magazine');
-document.getElementById('input-year').value = searchString.get('year_release');
+    document.getElementById('input-author').value = searchString.get('author');
+    document.getElementById('input-title').value = searchString.get('title');
+    document.getElementById('input-magazine').value = searchString.get('magazine');
+    document.getElementById('input-year').value = searchString.get('year_release');
 
 
-$(document).ready(function (){
-    $("#apply-filter-btn").click(
-        function (){
-            var params = generateJSON();
-            const currentUrl = window.location.host;
-            var url = new URL(currentUrl);
+    $(document).ready(function (){
+        $("#apply-filter-btn").click(
+            function (){
+                var params = generateJSON();
+                const currentUrl = window.location.host;
+                var url = new URL(currentUrl);
 
-            url.searchParams.append('title', params['title']);
-            url.searchParams.append('author', params['author']);
-            url.searchParams.append('magazine', params['magazine']);
-            url.searchParams.append('year_release', params['year_release']);
-      
-            document.location.href = " http://" + url.href
-        }
-    )
-})
+                url.searchParams.append('title', params['title']);
+                url.searchParams.append('author', params['author']);
+                url.searchParams.append('magazine', params['magazine']);
+                url.searchParams.append('year_release', params['year_release']);
+
+                document.location.href = " http://" + url.href
+            }
+        )
+    })
+}
+
 
 
 function generateJSON() {
@@ -73,3 +80,16 @@ $(document).ready(function () {
         }
     )
 })
+
+$(document).ready(function (){
+    $(".registration-button").click(
+        function () {
+            location.href = "/registration";
+        }
+    )
+});
+
+// var goToRegistration = document.getElementsByClassName("registration-button");
+// goToRegistration.addEventListener("click", function(e){
+//     window.location.href = "http://registration";
+// }, false);

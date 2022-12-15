@@ -27,6 +27,8 @@
 
      <div class="articles-cards-conainer">
 
+         {% if user is not null %}
+
      {% for article in articles%}
         <div class="article-card">
             <div class="container text-center">
@@ -61,6 +63,7 @@
     
         </div>
         {% endfor %}
+         {% endif %}
 
         
     </div>

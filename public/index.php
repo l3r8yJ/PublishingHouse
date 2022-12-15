@@ -1,6 +1,17 @@
 <?php
-use \Psr\Http\Message\ServerRequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
+
+use App\Controllers\ArticleController;
+use App\Controllers\AuthorizationController;
+use App\Controllers\ViewController;
+use App\Controllers\Session;
+use App\Database\Storage\ArticleStorage;
+use App\Database\Storage\UserStorage;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Slim\App;
+use DI\Container as Container;
+use Slim\Factory\AppFactory;
+use Slim\Http\Response;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -26,20 +37,46 @@ $db = new \PDO($generalConfig['MYSQL_PATH'], 'root', 'root');
 $loader = new FilesystemLoader ('templates');
 $view = new Environment ($loader);
 
-$app = new \Slim\App();
+$container = new Container();
+
+$articleStorage = new ArticleStorage($db);
+$articleController = new ArticleController($articleStorage);
+$userStorage = new UserStorage($db);
+
+$session = new Session();
+$sessionMiddleware = function (ServerRequestInterface $request, RequestHandlerInterface $handler) use ($session){
+    $session->start();
+    $response = $handler->handle($request);
+    $session->save();
+
+    return $response;
+};
+
+$container->set('view', $view);
+$container->set('db', $db);
+$container->set('session', $session);
+$container->set('articleStorage', $articleStorage);
+$container->set('articleController', $articleController);
+$container->set('userStorage', $userStorage);
+
+
+AppFactory::setContainer($container);
+$app = AppFactory::create();
 
 $container = $app->getContainer();
 
-$articleStorage = new \App\Database\Storage\ArticleStorage($db);
-$articleController = new \App\Controllers\ArticleController($articleStorage);
+$app->add($sessionMiddleware);
 
-$container['view'] = $view;
-$container['articleStorage'] = $articleStorage;
-$container['articleController'] = $articleController;
+$viewController = new ViewController($container);
+$authorizationController = new AuthorizationController($container);
 
-$homeController = new \App\Controllers\HomeController($container);
+$app->get('/', ViewController::class . ':index');
+$app->get('/login', ViewController::class . ':login');
+$app->get('/registration', ViewController::class . ':registration');
 
-$app->get('/', array($homeController, 'index'));
+$app->post('/api/login', AuthorizationController::class . ':login');
+$app->post('/api/registration', AuthorizationController::class . ':registration');
+$app->post('/api/logout', AuthorizationController::class . ':logout');
 
 $app->run();
 
