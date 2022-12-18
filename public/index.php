@@ -66,7 +66,6 @@ $app = AppFactory::create();
 $container = $app->getContainer();
 
 $app->add($sessionMiddleware);
-
 $viewController = new ViewController($container);
 $authorizationController = new AuthorizationController($container);
 
@@ -77,6 +76,9 @@ $app->get('/registration', ViewController::class . ':registration');
 $app->post('/api/login', AuthorizationController::class . ':login');
 $app->post('/api/registration', AuthorizationController::class . ':registration');
 $app->post('/api/logout', AuthorizationController::class . ':logout');
+$app->delete('/api/article/deleteById', ArticleController::class . ':deleteById');
+$app->post('/api/article/create', ArticleController::class . ':create');
+$app->post('/api/article/update', ArticleController::class . ':update');
 
 $app->run();
 
